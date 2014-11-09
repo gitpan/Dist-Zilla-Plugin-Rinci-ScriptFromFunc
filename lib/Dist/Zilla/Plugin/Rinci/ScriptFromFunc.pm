@@ -1,7 +1,7 @@
 package Dist::Zilla::Plugin::Rinci::ScriptFromFunc;
 
-our $DATE = '2014-08-16'; # DATE
-our $VERSION = '0.01'; # VERSION
+our $DATE = '2014-11-09'; # DATE
+our $VERSION = '0.02'; # VERSION
 
 use 5.010001;
 use strict;
@@ -149,7 +149,7 @@ sub gather_files {
             ($self->snippet_before_instantiate_cmdline ? "# snippet_before_instantiate_cmdline\n" . $self->snippet_before_instantiate_cmdline . "\n\n" : ""),
             "$cmdline_mod->new(\n",
             "    url => ", dump($url), ",\n",
-            (defined($scriptspec{log_any_app}) ? "    log_any_app => " . dump($scriptspec{log_any_app}) . ",\n" : ""),
+            (defined($scriptspec{log}) ? "    log => " . dump($scriptspec{log}) . ",\n" : ""),
             ")->run;\n",
             "\n",
         );
@@ -171,14 +171,15 @@ sub gather_files {
         );
 
         # Description POD section
-        require Markdown::To::POD;
-        $content .= join(
-            "",
-            "\n=head1 DESCRIPTION\n\n",
-            $meta->{description} ?
-                Markdown::To::POD::markdown_to_pod($meta->{description}) : '',
-            "\n",
-        );
+        if ($meta->{description}) {
+            require Markdown::To::POD;
+            $content .= join(
+                "",
+                "\n=head1 DESCRIPTION\n\n",
+                Markdown::To::POD::markdown_to_pod($meta->{description}),
+                "\n",
+            );
+        }
 
         # Options POD section
         $content .= join(
@@ -212,7 +213,7 @@ Dist::Zilla::Plugin::Rinci::ScriptFromFunc - Create or fill out script details f
 
 =head1 VERSION
 
-This document describes version 0.01 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-08-16.
+This document describes version 0.02 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-09.
 
 =head1 SYNOPSIS
 
@@ -291,7 +292,7 @@ If set, will add this code to the generated script:
 
 This can be used if you want your script to be verbose by default, for example.
 
-=item * log_any_app => bool
+=item * log => bool
 
 Set value in the Perinci::CmdLine object construction code.
 
@@ -442,11 +443,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
