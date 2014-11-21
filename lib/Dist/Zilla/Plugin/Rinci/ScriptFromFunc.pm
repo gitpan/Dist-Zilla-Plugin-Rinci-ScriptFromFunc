@@ -1,7 +1,7 @@
 package Dist::Zilla::Plugin::Rinci::ScriptFromFunc;
 
-our $DATE = '2014-11-09'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $DATE = '2014-11-21'; # DATE
+our $VERSION = '0.03'; # VERSION
 
 use 5.010001;
 use strict;
@@ -9,11 +9,7 @@ use warnings;
 
 use Moose;
 with (
-	'Dist::Zilla::Role::FileFinderUser' => {
-		default_finders => [ ':ExecFiles' ],
-	},
         'Dist::Zilla::Role::FileGatherer',
-	#'Dist::Zilla::Role::FileMunger',
 );
 
 use namespace::autoclean;
@@ -50,33 +46,6 @@ sub _get_meta {
     $self->log_fatal("Can't get meta $url: $res->[0] - $res->[1]")
         unless $res->[0] == 200;
     $res->[2];
-}
-
-sub munge_files {
-    my $self = shift;
-
-    $self->munge_file($_) for @{ $self->found_files };
-    return;
-}
-
-sub munge_file {
-    my ($self, $file) = @_;
-
-    my $filename = $file->name;
-    my $filebasename = $filename; $filebasename =~ s!.+/!!;
-
-    unless ($file->name =~ m!(script|bin)/!) {
-        $self->log_debug('Skipping $filename: not script');
-        return;
-    }
-
-    my $content = $file->content;
-
-    # do stuffs with content
-
-    $file->content($content);
-
-    return;
 }
 
 sub gather_files {
@@ -160,35 +129,6 @@ sub gather_files {
         # podname
         $content .= "# PODNAME: $scriptname\n";
 
-        # Synopsis POD section
-        $content .= join(
-            "",
-            "\n=head1 SYNOPSIS\n\n",
-            "Usage:\n\n % $scriptname\n\n", # XXX
-            "Examples:\n\n TODO\n\n", # XXX
-            "To see all options:\n\n % $scriptname --help\n\n",
-            "\n",
-        );
-
-        # Description POD section
-        if ($meta->{description}) {
-            require Markdown::To::POD;
-            $content .= join(
-                "",
-                "\n=head1 DESCRIPTION\n\n",
-                Markdown::To::POD::markdown_to_pod($meta->{description}),
-                "\n",
-            );
-        }
-
-        # Options POD section
-        $content .= join(
-            "",
-            "\n=head1 OPTIONS\n\n",
-            " TODO\n",
-            "\n",
-        );
-
         my $file = Dist::Zilla::File::InMemory->new(
             name => "bin/$scriptname", content => $content);
         $self->log("Creating script 'bin/$scriptname' from Riap function '$url'");
@@ -213,7 +153,7 @@ Dist::Zilla::Plugin::Rinci::ScriptFromFunc - Create or fill out script details f
 
 =head1 VERSION
 
-This document describes version 0.02 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-09.
+This document describes version 0.03 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-21.
 
 =head1 SYNOPSIS
 
@@ -423,6 +363,9 @@ Allow specifying links
 
 L<Rinci>
 
+L<Pod::Weaver::Plugin::Rinci> to fill more stuffs to the POD of the generated
+script.
+
 Other C<Dist::Zilla::Plugin::Rinci::*> for plugins that utilize Rinci metadata.
 
 =head1 HOMEPAGE
@@ -431,7 +374,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Dist-Zilla
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFunc>.
+Source repository is at L<https://github.com/perlancar/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFunc>.
 
 =head1 BUGS
 

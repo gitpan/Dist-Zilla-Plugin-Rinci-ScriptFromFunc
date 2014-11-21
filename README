@@ -3,9 +3,9 @@ NAME
     details from Riap function metadata
 
 VERSION
-    This document describes version 0.02 of
+    This document describes version 0.03 of
     Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution
-    Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-09.
+    Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-21.
 
 SYNOPSIS
     In "dist.ini":
@@ -199,6 +199,9 @@ TODO
 SEE ALSO
     Rinci
 
+    Pod::Weaver::Plugin::Rinci to fill more stuffs to the POD of the
+    generated script.
+
     Other "Dist::Zilla::Plugin::Rinci::*" for plugins that utilize Rinci
     metadata.
 
@@ -208,7 +211,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFun
+    <https://github.com/perlancar/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFun
     c>.
 
 BUGS
