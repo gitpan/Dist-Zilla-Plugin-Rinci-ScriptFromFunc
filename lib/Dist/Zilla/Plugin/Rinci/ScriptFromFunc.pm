@@ -1,7 +1,7 @@
 package Dist::Zilla::Plugin::Rinci::ScriptFromFunc;
 
-our $DATE = '2014-11-21'; # DATE
-our $VERSION = '0.03'; # VERSION
+our $DATE = '2014-12-31'; # DATE
+our $VERSION = '0.04'; # VERSION
 
 use 5.010001;
 use strict;
@@ -21,6 +21,17 @@ sub mvp_multivalue_args { qw(script) }
 has script => (is => 'rw');
 
 has snippet_before_instantiate_cmdline => (is=>'rw');
+
+our %KNOWN_SCRIPT_SPEC_PROPS = (
+    func => 1,
+    name => 1,
+    cmdline => 1,
+    prefer_lite => 1,
+    default_log_level => 1,
+    log => 1,
+    ssl_verify_hostname => 1,
+    snippet_before_instantiate_cmdline => 1,
+);
 
 sub _get_meta {
     my ($self, $url, $scriptspec) = @_;
@@ -58,6 +69,10 @@ sub gather_files {
     for my $script (ref($scripts) eq 'ARRAY' ? @$scripts : ($scripts)) {
         my %scriptspec = map { split /\s*=\s*/, $_, 2 }
             split /\s*,\s*/, $script;
+        for (keys %scriptspec) {
+            $self->log_fatal("Unknown spec property '$_' (script=$script)")
+                unless $KNOWN_SCRIPT_SPEC_PROPS{$_};
+        }
         my $url = $scriptspec{func}
             or $self->log_fatal("No func URL ('func') specified (script=$script)");
         my $scriptname = $scriptspec{name};
@@ -92,6 +107,10 @@ sub gather_files {
                 {phase => 'runtime'}, $cmdline_mod => $ver);
         }
 
+        my $snippet_before_instantiate_cmdline =
+            $scriptspec{snippet_before_instantiate_cmdline} //
+                $self->snippet_before_instantiate_cmdline;
+
         # code
         $content .= join(
             "",
@@ -115,7 +134,7 @@ sub gather_files {
                  " -prefer_lite=>1" : ""),
             ";\n\n",
             ($scriptspec{ssl_verify_hostname} // 1 ? "" : '$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;' . "\n\n"),
-            ($self->snippet_before_instantiate_cmdline ? "# snippet_before_instantiate_cmdline\n" . $self->snippet_before_instantiate_cmdline . "\n\n" : ""),
+            ($snippet_before_instantiate_cmdline ? "# snippet_before_instantiate_cmdline\n" . $snippet_before_instantiate_cmdline . "\n\n" : ""),
             "$cmdline_mod->new(\n",
             "    url => ", dump($url), ",\n",
             (defined($scriptspec{log}) ? "    log => " . dump($scriptspec{log}) . ",\n" : ""),
@@ -153,7 +172,7 @@ Dist::Zilla::Plugin::Rinci::ScriptFromFunc - Create or fill out script details f
 
 =head1 VERSION
 
-This document describes version 0.03 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-21.
+This document describes version 0.04 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2015-12-31.
 
 =head1 SYNOPSIS
 
@@ -243,6 +262,10 @@ If set to 0, will add this code to the generated script:
  $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 
 This can be used if the Riap function URL is https and you don't want to verify.
+
+=item * snippet_before_instantiate_cmdline => str
+
+This is like the configuration, but per-script.
 
 =back
 
@@ -374,7 +397,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Dist-Zilla
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFunc>.
+Source repository is at L<https://github.com/sharyanto/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFunc>.
 
 =head1 BUGS
 

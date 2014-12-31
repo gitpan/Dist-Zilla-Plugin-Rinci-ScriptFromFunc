@@ -1,22 +1,15 @@
-NAME
-    Dist::Zilla::Plugin::Rinci::ScriptFromFunc - Create or fill out script
-    details from Riap function metadata
-
-VERSION
-    This document describes version 0.03 of
-    Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution
-    Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2014-11-21.
-
 SYNOPSIS
-    In "dist.ini":
+
+    In dist.ini:
 
      [Rinci::ScriptFromFunc]
      script= func=/My/Palindrome/check_palindrome,
      script= name=lssrv, func=/My/App/list_servers
 
-    After build, "bin/check-palindrome" and "bin/lssrv" will be created.
+    After build, bin/check-palindrome and bin/lssrv will be created.
 
 DESCRIPTION
+
     After you add Rinci metadata to your function, e.g.:
 
      package My::Palindrome;
@@ -34,8 +27,8 @@ DESCRIPTION
          $text eq reverse($text);
      }
 
-    you can create a command-line script for that function that basically is
-    not much more than:
+    you can create a command-line script for that function that basically
+    is not much more than:
 
      #!perl
      use Perinci::CmdLine::Any;
@@ -43,65 +36,69 @@ DESCRIPTION
 
     This Dist::Zilla plugin lets you automate the creation of such scripts.
 
-    Creating scripts. To create a script, put this in "dist.ini":
+    Creating scripts. To create a script, put this in dist.ini:
 
      [Rinci::ScriptFromFunc]
      script= func=/My/Palindrome/check_palindrome, abstract=Check if a text is a palindrome
 
-    To create more scripts, add more "script=..." lines. Each "script=..."
-    line is a script specification, containing comma-separated key=value
-    items. Known keys:
+    To create more scripts, add more script=... lines. Each script=... line
+    is a script specification, containing comma-separated key=value items.
+    Known keys:
 
-    *   func => str
+      * func => str
 
-        Riap function URL.
+      Riap function URL.
 
-    *   name => str
+      * name => str
 
-        Name of script to create. Default will be taken from function name,
-        with "_" replaced to "-".
+      Name of script to create. Default will be taken from function name,
+      with _ replaced to -.
 
-    *   cmdline => str
+      * cmdline => str
 
-        Select module to use. Default is Perinci::CmdLine::Any, but you can
-        set this to "classic" (equals to Perinci::CmdLine), "any"
-        (Perinci::CmdLine::Any), or "lite" (Perinci::CmdLine::Lite) or
-        module name.
+      Select module to use. Default is Perinci::CmdLine::Any, but you can
+      set this to classic (equals to Perinci::CmdLine), any
+      (Perinci::CmdLine::Any), or lite (Perinci::CmdLine::Lite) or module
+      name.
 
-    *   prefer_lite => bool
+      * prefer_lite => bool
 
-        If set to 1 and you are using "Perinci::CmdLine::Any",
-        "-prefer_lite" option will be passed in the code.
+      If set to 1 and you are using Perinci::CmdLine::Any, -prefer_lite
+      option will be passed in the code.
 
-    *   default_log_level => str
+      * default_log_level => str
 
-        If set, will add this code to the generated script:
+      If set, will add this code to the generated script:
 
-         BEGIN { no warnings; $main::Log_Level = "..." }
+       BEGIN { no warnings; $main::Log_Level = "..." }
 
-        This can be used if you want your script to be verbose by default,
-        for example.
+      This can be used if you want your script to be verbose by default,
+      for example.
 
-    *   log => bool
+      * log => bool
 
-        Set value in the Perinci::CmdLine object construction code.
+      Set value in the Perinci::CmdLine object construction code.
 
-    *   ssl_verify_hostname => bool (default: 1)
+      * ssl_verify_hostname => bool (default: 1)
 
-        If set to 0, will add this code to the generated script:
+      If set to 0, will add this code to the generated script:
 
-         $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
+       $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 
-        This can be used if the Riap function URL is https and you don't
-        want to verify.
+      This can be used if the Riap function URL is https and you don't want
+      to verify.
+
+      * snippet_before_instantiate_cmdline => str
+
+      This is like the configuration, but per-script.
 
     Filling out script details. (NOT YET IMPLEMENTED.) You can also create
-    the script manually in "bin/", but put this marker at the top of the
+    the script manually in bin/, but put this marker at the top of the
     script:
 
      C<# FROMFUNC: ...>
 
-    Where "..." contains the same comma-separated key=value items, for
+    Where ... contains the same comma-separated key=value items, for
     example:
 
      C<# FROMFUNC: func=/My/Palindrome/check-palindrome>
@@ -109,125 +106,104 @@ DESCRIPTION
     What are put in the script. Below are the things put in the script by
     this plugin:
 
-    *   shebang line
+      * shebang line
 
-         #!perl
+       #!perl
 
-        Not added when not creating.
+      Not added when not creating.
 
-    *   "# DATE" line
+      * # DATE line
 
-        See Dist::Zilla::Plugin::OurDate. Not added if already there.
+      See Dist::Zilla::Plugin::OurDate. Not added if already there.
 
-    *   "# VERSION" line
+      * # VERSION line
 
-        See Dist::Zilla::Plugin::OurVersion. Not added if already there.
+      See Dist::Zilla::Plugin::OurVersion. Not added if already there.
 
-    *   "# ABSTRACT" line
+      * # ABSTRACT line
 
-        Value will be taken from "summary" property of the Rinci metadata.
-        Not added if already there.
+      Value will be taken from summary property of the Rinci metadata. Not
+      added if already there.
 
-    *   "# PODNAME" line
+      * # PODNAME line
 
-        Value will be taken from function name, with underscore ("_")
-        replaced with dash ("-"). Not added if already there.
+      Value will be taken from function name, with underscore (_) replaced
+      with dash (-). Not added if already there.
 
-    *   Perl code to use the function as a CLI script
+      * Perl code to use the function as a CLI script
 
-        By default it's something like this (some aspects customizable):
+      By default it's something like this (some aspects customizable):
 
-         use 5.010001;
-         use strict;
-         use warnings;
+       use 5.010001;
+       use strict;
+       use warnings;
+      
+       use Perinci::CmdLine::Any;
+       Perinci::CmdLine::Any->new(
+           url => '/My/Palindrome/check_palindrome',
+       );
 
-         use Perinci::CmdLine::Any;
-         Perinci::CmdLine::Any->new(
-             url => '/My/Palindrome/check_palindrome',
-         );
+      * Synopsis POD section
 
-    *   Synopsis POD section
+      Will display script's usage as well as examples from the examples
+      property in the Rinci metadata, if any. Not added if already there.
 
-        Will display script's usage as well as examples from the "examples"
-        property in the Rinci metadata, if any. Not added if already there.
+      * Description POD section
 
-    *   Description POD section
+      Value taken from description property of the Rinci metadata. Not
+      added if already there.
 
-        Value taken from "description" property of the Rinci metadata. Not
-        added if already there.
+      * Options POD section
 
-    *   Options POD section
-
-        List all the command-line options that the script accepts. Not added
-        if already there.
+      List all the command-line options that the script accepts. Not added
+      if already there.
 
 CONFIGURATION
-  script => str (multiple allowed)
+
+ script => str (multiple allowed)
+
     Specify script to be generated (name, source function, etc). See
     "DESCRIPTION" for more details.
 
-  snippet_* => str
+ snippet_* => str
+
     Insert code snippet in various places, for some customization in the
     process of code generation.
 
      snippet_before_instantiate_cmdline
 
 TODO
-    *   fatpacker-friendly
 
-        Add 'use MODULE' (if function URL points to local module) so
-        dependencies can be detected more easily (more fatpacker-friendly).
+      * fatpacker-friendly
 
-    *   logging
+      Add 'use MODULE' (if function URL points to local module) so
+      dependencies can be detected more easily (more fatpacker-friendly).
 
-        In Synopsis, add an example on how to enable debugging/tracing.
+      * logging
 
-    *   completion
+      In Synopsis, add an example on how to enable debugging/tracing.
 
-        If "completion=1", add instruction on how to enable bash completion
-        in Synopsis.
+      * completion
 
-    *   link to corresponding module
+      If completion=1, add instruction on how to enable bash completion in
+      Synopsis.
 
-        Link to corresponding Perl module in See Also (the Version POD
-        section already mentions the dist name though).
+      * link to corresponding module
 
-    *   customize See Also
+      Link to corresponding Perl module in See Also (the Version POD
+      section already mentions the dist name though).
 
-        Allow specifying links
+      * customize See Also
+
+      Allow specifying links
 
 SEE ALSO
+
     Rinci
 
     Pod::Weaver::Plugin::Rinci to fill more stuffs to the POD of the
     generated script.
 
-    Other "Dist::Zilla::Plugin::Rinci::*" for plugins that utilize Rinci
+    Other Dist::Zilla::Plugin::Rinci::* for plugins that utilize Rinci
     metadata.
-
-HOMEPAGE
-    Please visit the project's homepage at
-    <https://metacpan.org/release/Dist-Zilla-Plugin-Rinci-ScriptFromFunc>.
-
-SOURCE
-    Source repository is at
-    <https://github.com/perlancar/perl-Dist-Zilla-Plugin-Rinci-ScriptFromFun
-    c>.
-
-BUGS
-    Please report any bugs or feature requests on the bugtracker website
-    <https://rt.cpan.org/Public/Dist/Display.html?Name=Dist-Zilla-Plugin-Rin
-    ci-ScriptFromFunc>
-
-    When submitting a bug or request, please include a test-file or a patch
-    to an existing test-file that illustrates the bug or desired feature.
-
-AUTHOR
-    perlancar <perlancar@cpan.org>
-
-COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by perlancar@cpan.org.
-
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
 
