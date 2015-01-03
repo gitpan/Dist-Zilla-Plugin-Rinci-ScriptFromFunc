@@ -1,7 +1,7 @@
 package Dist::Zilla::Plugin::Rinci::ScriptFromFunc;
 
-our $DATE = '2014-12-31'; # DATE
-our $VERSION = '0.04'; # VERSION
+our $DATE = '2015-01-03'; # DATE
+our $VERSION = '0.05'; # VERSION
 
 use 5.010001;
 use strict;
@@ -172,7 +172,7 @@ Dist::Zilla::Plugin::Rinci::ScriptFromFunc - Create or fill out script details f
 
 =head1 VERSION
 
-This document describes version 0.04 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2015-12-31.
+This document describes version 0.05 of Dist::Zilla::Plugin::Rinci::ScriptFromFunc (from Perl distribution Dist-Zilla-Plugin-Rinci-ScriptFromFunc), released on 2015-01-03.
 
 =head1 SYNOPSIS
 
@@ -353,35 +353,6 @@ code generation.
 
  snippet_before_instantiate_cmdline
 
-=head1 TODO
-
-=over
-
-=item * fatpacker-friendly
-
-Add 'use MODULE' (if function URL points to local module) so dependencies can be
-detected more easily (more fatpacker-friendly).
-
-=item * logging
-
-In Synopsis, add an example on how to enable debugging/tracing.
-
-=item * completion
-
-If C<completion=1>, add instruction on how to enable bash completion in
-Synopsis.
-
-=item * link to corresponding module
-
-Link to corresponding Perl module in See Also (the Version POD section already
-mentions the dist name though).
-
-=item * customize See Also
-
-Allow specifying links
-
-=back
-
 =head1 SEE ALSO
 
 L<Rinci>
@@ -413,7 +384,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
